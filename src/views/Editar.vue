@@ -16,6 +16,19 @@
                 <!-- Puedes agregar un ícono específico para la descripción si lo deseas -->
             </a-input>
         </a-form-item>
+        <!-- Agregado: Multi-Select para ingredientes -->
+        <a-form-item name="ingredientes" label="Seleccione ingredientes">
+            <a-select
+                v-model:value="formState.ingredientes"
+                mode="tags"
+                placeholder="Seleccione o agregue ingredientes"
+            >
+                <!-- Puedes cargar dinámicamente la lista de ingredientes si es necesario -->
+                <a-select-option v-for="ingrediente in listaDeIngredientes" :key="ingrediente">
+                    {{ ingrediente }}
+                </a-select-option>
+            </a-select>
+        </a-form-item>
         <a-form-item>
             <a-button type="primary" html-type="submit" :loading="databaseStore.loading"
                 :disabled="databaseStore.loading">Editar nombreR</a-button>
@@ -35,15 +48,19 @@ const route = useRoute();
 const databaseStore = useDatabaseStore();
 const formState = reactive({
     nombreR: '',
-    descripcionR: '' // Agregamos el campo descripcionR al estado del formulario
+    descripcionR: '',
+    ingredientes: [] // Agregamos el campo ingredientes al estado del formulario
 });
 
+const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3']; // Puedes cargar esta lista dinámicamente
+
 const onFinish = async () => {
-    const result = await databaseStore.updateNombreR(route.params.id, formState.nombreR, formState.descripcionR);
+    const result = await databaseStore.updateNombreR(route.params.id, formState.nombreR, formState.descripcionR, formState.ingredientes);
 
     if (!result) {
         formState.nombreR = '';
-        formState.descripcionR = ''; // Limpiamos el campo descripcionR después de editar
+        formState.descripcionR = '';
+        formState.ingredientes = []; // Limpiamos el campo ingredientes después de editar
         return message.success('Se cambió correctamente ');
     }
 
@@ -53,7 +70,8 @@ const onFinish = async () => {
 onMounted(async () => {
     const data = await databaseStore.leerNombreR(route.params.id);
     formState.nombreR = data.name;
-    formState.descripcionR = data.descripcionR || ''; // Aseguramos que descripcionR esté presente, incluso si es null
+    formState.descripcionR = data.descripcionR || '';
+    formState.ingredientes = data.ingredientes || []; // Aseguramos que ingredientes esté presente, incluso si es null
 });
 </script>
 

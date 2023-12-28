@@ -1,3 +1,4 @@
+// Importaciones
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore/lite';
 import { defineStore } from 'pinia';
 import { db } from '../firebaseConfig';
@@ -5,6 +6,7 @@ import { auth } from '../firebaseConfig';
 import { nanoid } from 'nanoid'
 import router from '../router';
 
+// Definición del almacén
 export const useDatabaseStore = defineStore('database', {
     state: () => ({
         documents: [],
@@ -26,7 +28,7 @@ export const useDatabaseStore = defineStore('database', {
                 console.log(error.code);
                 return false;
             } finally {
-                // Aquí puedes realizar acciones adicionales después de la operación
+                // Acciones adicionales después de la operación
             }
         },
         async getNombreRs() {
@@ -50,12 +52,13 @@ export const useDatabaseStore = defineStore('database', {
                 this.loadingDoc = false;
             }
         },
-        async addNombreR(name, descripcionR) {
+        async addNombreR(name, descripcionR, ingredientes) {
             this.loading = true;
             try {
                 const objectDoc = {
                     name,
                     descripcionR,
+                    ingredientes,
                     short: nanoid(6),
                     user: auth.currentUser.uid
                 }
@@ -88,10 +91,10 @@ export const useDatabaseStore = defineStore('database', {
                 console.log(error.code);
                 return error.code;
             } finally {
-                // Realiza acciones adicionales después de la operación
+                // Acciones adicionales después de la operación
             }
         },
-        async updateNombreR(id, name, descripcionR){
+        async updateNombreR(id, name, descripcionR, ingredientes) {
             this.loading = true;
             try {
                 const docRef = doc(db, 'nombreRs', id);
@@ -106,9 +109,10 @@ export const useDatabaseStore = defineStore('database', {
 
                 await updateDoc(docRef, {
                     name,
-                    descripcionR
+                    descripcionR,
+                    ingredientes
                 });
-                this.documents =  this.documents.map((item) => item.id === id ? ({...item, name, descripcionR}): item);
+                this.documents = this.documents.map((item) => item.id === id ? ({ ...item, name, descripcionR, ingredientes }): item);
                 router.push('/');
             } catch (error) {
                 console.log(error.code);
