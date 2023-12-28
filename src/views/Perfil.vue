@@ -23,20 +23,6 @@
                         </template>
                     </a-input>
                 </a-form-item>
-                <a-form-item name="lastName" label="Ingrese su apellido">
-                    <a-input v-model:value="userStore.userData.lastName" placeholder="Apellido">
-                        <template #prefix>
-                            <UserOutlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
-                
-                <a-form-item name="birthday" label="Ingrese su fecha de cumpleaños">
-                    <a-input v-model:value="userStore.userData.birthday" placeholder="Fecha de cumpleaños">
-                        <!-- Puedes cambiar el tipo de input según tus necesidades, por ejemplo, usar type="date" -->
-                    </a-input>
-                </a-form-item>
-                
                 <a-form-item>
                     <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload"
                         @change="handleChange">
@@ -109,20 +95,14 @@ const handleChange = info => {
 };
 
 const onFinish = async () => {
-    const result = await userStore.updateUser(
-        userStore.userData.displayName,
-        userStore.userData.lastName,
-        userStore.userData.birthday,
-        fileList.value[0]
-    );
-
+    const result = await userStore.updateUser(userStore.userData.displayName, fileList.value[0]);
+    
     if (!result) {
-        console.log(userStore.userData.photoURL);
-        return message.success('Se actualizó tu información');
+        console.log(userStore.userData.photoURL)
+        return message.success('Se actualizo tu informacion');
     }
-    message.error('Ocurrió un error');
-};
-
+    message.error('Ocuerrio un error')
+}
 
 const onFinishFailed = () => {
 

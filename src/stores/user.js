@@ -8,18 +8,10 @@ import { useDatabaseStore } from './database'
 
 export const useUserStore = defineStore('userStore', {
     state: () => ({
-        userData: {
-            email: null,
-            uid: null,
-            displayName: null,
-            photoUrl: null,
-            lastName: null, // Nuevo campo para el apellido
-            birthday: null, // Nuevo campo para la fecha de cumpleaños
-        },
+        userData: null,
         loadingUser: false,
-        loadingSession: false,
+        loadingSession: false
     }),
-    
     getters: {
 
     },
@@ -41,70 +33,47 @@ export const useUserStore = defineStore('userStore', {
                 this.loadingUser = false;
             }
         },
-        async setUser(user) {
+        async setUser(user){
             try {
                 const docRef = doc(db, 'users', user.uid);
-        
+
                 this.userData = {
                     email: user.email,
                     uid: user.uid,
                     displayName: user.displayName,
-                    photoUrl: user.photoURL,
-                    lastName: null,
-                    birthday: null,
-                };
-        
-                // Recupera el documento del usuario en Firestore para obtener datos adicionales
-                const userDoc = await getDoc(docRef);
-        
-                if (userDoc.exists()) {
-                    const userDataFromFirestore = userDoc.data();
-                    this.userData.lastName = userDataFromFirestore.lastName;
-                    this.userData.birthday = userDataFromFirestore.birthday;
-                }
-        
-                // ...
+                    photoUrl: user.photoURL
+                }; 
+                await setDoc(docRef, this.userData);
+                //console.log(this.userData)
             } catch (error) {
                 console.log(error);
             }
         },
-        
-        async updateUser(displayName, lastName, birthday, image) {
+        async updateUser(displayName, image){
             try {
                 if (image) {
                     this.loadingUser = true;
+                    // console.log(image);
                     const storageRef = ref(storage, `perfiles/${this.userData.uid}`);
                     await uploadBytes(storageRef, image.originFileObj);
                     const photoURL =  await getDownloadURL(storageRef);
-        
+                    // console.log(photoURL)
                     await updateProfile(auth.currentUser, {
                         photoURL,
-                    });
+                   }); 
                 }
-        
+
                 await updateProfile(auth.currentUser, {
-                    displayName,
+                     displayName,
                 });
-        
-                const docRef = doc(db, 'users', auth.currentUser.uid);
-                await setDoc(docRef, {
-                    lastName,
-                    birthday,
-                }, { merge: true });
-        
-                // Actualiza el estado local con los nuevos datos
-                this.userData.displayName = displayName;
-                this.userData.lastName = lastName;
-                this.userData.birthday = birthday;
-        
+                this.setUser(auth.currentUser)
             } catch (error) {
                 console.log(error.code);
-                return error.code;
+                return error.code
             } finally {
                 this.loadingUser = false;
             }
         },
-        
         async loginUser(email, password) {
             try {
                 this.loadingUser = true;
