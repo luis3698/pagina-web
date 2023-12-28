@@ -12,34 +12,32 @@ export const useDatabaseStore = defineStore('database', {
         loading: false
     }),
     actions: {
-        async getUrl(id) {
+        async getNombreR(id) {
             try {
-                const docRef = doc(db, "urls", id);
+                const docRef = doc(db, "nombreRs", id);
                 const docSnap = await getDoc(docRef);
-
 
                 if (!docSnap.exists()) {
                     return false;
                 }
 
-                return docSnap.data().name
+                return docSnap.data();
             } catch (error) {
                 console.log(error.code);
                 return false;
             } finally {
-
+                // Aquí puedes realizar acciones adicionales después de la operación
             }
         },
-        async getUrls() {
+        async getNombreRs() {
             if (this.documents.length !== 0) {
                 return;
             }
             this.loadingDoc = true;
             try {
-                const q = query(collection(db, 'urls'), where("user", "==", auth.currentUser.uid));
+                const q = query(collection(db, 'nombreRs'), where("user", "==", auth.currentUser.uid));
                 const querySnapShot = await getDocs(q);
                 querySnapShot.forEach(doc => {
-                    // console.log(doc.id, doc.data());
                     this.documents.push({
                         id: doc.id,
                         ...doc.data()
@@ -52,20 +50,20 @@ export const useDatabaseStore = defineStore('database', {
                 this.loadingDoc = false;
             }
         },
-        async addUrl(name) {
+        async addNombreR(name, descripcionR) {
             this.loading = true;
             try {
                 const objectDoc = {
                     name,
+                    descripcionR,
                     short: nanoid(6),
                     user: auth.currentUser.uid
                 }
-                await setDoc(doc(db, "urls", objectDoc.short), objectDoc);
-                // console.log(docRef.id)
+                await setDoc(doc(db, "nombreRs", objectDoc.short), objectDoc);
                 this.documents.push({
                     ...objectDoc,
                     id: objectDoc.short
-                })
+                });
             } catch (error) {
                 console.log(error.code);
                 return error.code;
@@ -73,45 +71,45 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         },
-        async leerUrl(id) {
+        async leerNombreR(id) {
             try {
-                const docRef = doc(db, "urls", id);
+                const docRef = doc(db, "nombreRs", id);
                 const docSnap = await getDoc(docRef);
 
-
                 if (!docSnap.exists()) {
-                    throw new Error("No exite el error");
+                    throw new Error("No existe el documento");
                 }
                 if (docSnap.data().user !== auth.currentUser.uid) {
-                    throw new Error("No pues ser editado")
+                    throw new Error("No puede ser editado");
                 }
 
-                return docSnap.data().name
+                return docSnap.data();
             } catch (error) {
                 console.log(error.code);
                 return error.code;
             } finally {
-
+                // Realiza acciones adicionales después de la operación
             }
         },
-        async updateUrl(id, name){
+        async updateNombreR(id, name, descripcionR){
             this.loading = true;
             try {
-                const docRef = doc(db, 'urls', id);
+                const docRef = doc(db, 'nombreRs', id);
 
-                const docSpan = await getDoc(docRef);
-                if (!docSpan.exists()) {
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
                     throw new Error("No existe el documento");
                 }
-                if (docSpan.data().user !== auth.currentUser.uid) {
+                if (docSnap.data().user !== auth.currentUser.uid) {
                     throw new Error("Este documento no se puede actualizar");
                 }
 
                 await updateDoc(docRef, {
-                    name
-                })
-                this.documents =  this.documents.map((item) => item.id === id ? ({...item, name: name}): item);
-                router.push('/')
+                    name,
+                    descripcionR
+                });
+                this.documents =  this.documents.map((item) => item.id === id ? ({...item, name, descripcionR}): item);
+                router.push('/');
             } catch (error) {
                 console.log(error.code);
                 return error.code;
@@ -119,18 +117,18 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         },
-        async deleteUrl(id) {
+        async deleteNombreR(id) {
             try {
                 this.loading = true;
-                const docRef = doc(db, "urls", id);
+                const docRef = doc(db, "nombreRs", id);
 
                 const docSnap = await getDoc(docRef);
 
                 if (!docSnap.exists()) {
-                    throw new Error("No exite el error");
+                    throw new Error("No existe el documento");
                 }
                 if (docSnap.data().user !== auth.currentUser.uid) {
-                    throw new Error("No pues ser eliminado")
+                    throw new Error("No puede ser eliminado");
                 }
 
                 await deleteDoc(docRef);
@@ -143,4 +141,4 @@ export const useDatabaseStore = defineStore('database', {
             }
         }
     }
-}) 
+});

@@ -1,7 +1,6 @@
 <template>
     <div>
         <h1 class="text-center">Home</h1>
-        <p>{{ userStore.userData?.email }}</p>
 
         <add-form></add-form>
 
@@ -23,7 +22,7 @@
                                 <EditOutlined/>
                             </template>
                         </a-button>
-                        <a-button @click="copiarPortapeles(data.id)" shape="circle">
+                        <a-button @click="copiarPortapeles(data.id, data.descripcionR)" shape="circle">
                             <template #icon>
                                 <CopyOutlined/>
                             </template>
@@ -31,6 +30,7 @@
                     </a-space>
                 </template>
                 <p>{{ data.name }}</p>
+                <p>{{ data.descripcionR }}</p>
             </a-card> 
         </a-space>
     </div>
@@ -47,10 +47,10 @@ const userStore = useUserStore();
 const databaseStore = useDatabaseStore();
 const router = useRouter();
 
-databaseStore.getUrls();
+databaseStore.getNombreRs();
 
 const confirm = async(id) => {
-    const result = await databaseStore.deleteUrl(id)
+    const result = await databaseStore.deleteNombreR(id)
 
     if (!result) {
         return message.success('Se eliminó con éxito');
@@ -59,31 +59,22 @@ const confirm = async(id) => {
 };
 
 const cancel = () => {
-    message.error('No se elimino');
+    message.error('No se eliminó');
 };
 
-const copiarPortapeles = async (id) => {
+const copiarPortapeles = async (id, descripcionR) => {
     if (!navigator.clipboard) {
         return message.error('No tiene portapapeles');
     }
 
-    const path = `${window.location.origin}/${id}` 
+    const path = `${window.location.origin}/${id}\n${descripcionR}`;
 
     const err = await navigator.clipboard.writeText(path);
 
     if (err) {
-        message.error("Ocurrio un error");
+        message.error("Ocurrió un error");
     } else {
-        message.success("Url copiada");    
+        message.success("nombreR y descripcionR copiados");    
     }
-
-    // navigator.clipboard.writeText(path)
-    //     .then(() => {
-    //         message.success("Url copiada");
-    //     })
-    //     .catch((err) => {
-    //         message.error("Ocurrio un error");
-    //     });
-    
 }
 </script>
