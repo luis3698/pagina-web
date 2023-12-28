@@ -31,6 +31,9 @@
           <a-menu-item v-if="userStore.userData" key="perfil">
             <router-link to="/perfil">Perfil</router-link>
           </a-menu-item>
+          <a-menu-item v-if="userStore.userData" key="misrecetas">
+            <router-link to="/MisRecetas">Mis recetas</router-link>
+          </a-menu-item>
         
           <a-menu-item @click="userStore.logoutUser" v-if="userStore.userData" key="logout">
             <LogoutOutlined :style="{ fontSize: '20px' }"></LogoutOutlined>

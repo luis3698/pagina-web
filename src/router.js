@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from './stores/user';
 import { useDatabaseStore } from './stores/database';
 
+import MisRecetas from './views/MisRecetas.vue';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
@@ -44,6 +45,12 @@ const routes = [
         component: Home,
         beforeEnter: requireAuth,
         name: 'home'
+    },
+    {
+        path: '/MisRecetas',
+        component: MisRecetas,
+        beforeEnter: requireAuth,
+        name: 'misrecetas'
     },
     {
         path: '/editar/:id',
