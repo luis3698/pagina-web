@@ -1,5 +1,5 @@
 <template>
-    <h1>Editar id: {{ route.params.id }}</h1>
+    <h1>Editar</h1>
     <a-form name="editForm" autocomplete="off" layout="vertical" :model="formState" @finish="onFinish">
         <!-- Expresiones regulares para nombreR -->
         <a-form-item name="nombreR" label="Ingrese una nombreR"
@@ -12,9 +12,9 @@
         </a-form-item>
         <!-- Expresiones regulares para descripcionR (agregado) -->
         <a-form-item name="descripcionR" label="Ingrese una descripción">
-            <a-input v-model:value="formState.descripcionR" placeholder="Ingrese una descripción" enter-button>
+            <a-textarea v-model:value="formState.descripcionR" placeholder="Ingrese una descripción" enter-button>
                 <!-- Puedes agregar un ícono específico para la descripción si lo deseas -->
-            </a-input>
+            </a-textarea>
         </a-form-item>
         <!-- Agregado: Multi-Select para ingredientes -->
         <a-form-item name="ingredientes" label="Seleccione ingredientes">
@@ -52,7 +52,7 @@ const formState = reactive({
     ingredientes: [] // Agregamos el campo ingredientes al estado del formulario
 });
 
-const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3']; // Puedes cargar esta lista dinámicamente
+const listaDeIngredientes = ['']; // Puedes cargar esta lista dinámicamente
 
 const onFinish = async () => {
     const result = await databaseStore.updateNombreR(route.params.id, formState.nombreR, formState.descripcionR, formState.ingredientes);

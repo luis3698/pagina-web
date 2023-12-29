@@ -1,12 +1,13 @@
 <template>
     <div>
-      <h1 class="text-center">Home</h1>
+      <h1 class="text-center">Tus Recetas</h1>
   
       <add-form></add-form>
   
       <p v-if="databaseStore.loadingDoc">Loading docs...</p>
   
       <a-space direction="vertical" v-if="!databaseStore.loadingDoc" style="width: 100%;">
+        <h1 class="text-center">Nueva Receta</h1>
         <a-card v-for="data in databaseStore.documents" :key="data.id" :title="data.name">
           <template #extra>
             <a-space>
@@ -29,6 +30,7 @@
               </a-button>
             </a-space>
           </template>
+          
           <p>{{ data.descripcionR }}</p>
           <p >Ingredientes</p>
           <a-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32 }">

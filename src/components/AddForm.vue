@@ -53,7 +53,7 @@
     ingredientes: [] // Agregamos el campo ingredientes al estado del formulario
   });
   
-  const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3']; // Puedes cargar esta lista dinámicamente
+  const listaDeIngredientes = ['']; // Puedes cargar esta lista dinámicamente
   
   const onFinish = async (value) => {
     const result = await databaseStore.addNombreR(formState.nombreR, formState.descripcionR, formState.ingredientes);
