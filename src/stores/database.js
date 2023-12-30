@@ -5,7 +5,7 @@ import { db } from '../firebaseConfig';
 import { auth } from '../firebaseConfig';
 import { nanoid } from 'nanoid'
 import router from '../router';
-
+import { storage } from '../firebaseConfig'; 
 // Definición del almacén
 export const useDatabaseStore = defineStore('database', {
     state: () => ({
@@ -37,9 +37,7 @@ export const useDatabaseStore = defineStore('database', {
             }
             this.loadingDoc = true;
             try {
-                // const q = query(collection(db, 'nombreRs'), where("user", "==", auth.currentUser.uid));
-                const q = query(collection(db, 'nombreRs'));
-
+                const q = query(collection(db, 'nombreRs'), where("user", "==", auth.currentUser.uid));
                 const querySnapShot = await getDocs(q);
                 querySnapShot.forEach(doc => {
                     this.documents.push({
@@ -145,7 +143,23 @@ export const useDatabaseStore = defineStore('database', {
             } finally {
                 this.loading = false;
             }
-        }
+        },
+        async getAllNombreRs() {
+            this.loadingDoc = true;
+            try {
+                const q = query(collection(db, 'nombreRs'));
+                const querySnapShot = await getDocs(q);
+                this.documents = querySnapShot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+            } catch (error) {
+                console.log(error.code);
+                return error.code;
+            } finally {
+                this.loadingDoc = false;
+            }
+        },
     },
     
 });
