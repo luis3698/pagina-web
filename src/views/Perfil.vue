@@ -1,9 +1,19 @@
 <template>
-    <h1 class="text-center">Mi Perfil</h1>
+    <h1 class="text-center">{{ userStore.userData.displayName }}</h1>
     <!-- <p>{{ userStore.userData }}</p> -->
     <div class="text-center">
         <a-avatar :src="userStore.userData.photoUrl" :size="150"></a-avatar>
+        <a-form-item>
+            <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload"
+                @change="handleChange">
+                <a-button>
+                    <UploadOutlined />
+                    Subir imagen
+                </a-button>
+            </a-upload>
+        </a-form-item>
     </div>
+    
     <a-row>
         <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
             <a-form name="basicPerfil" autocomplete="off" layout="vertical" :model="userStore.userData" @finish="onFinish"
@@ -15,6 +25,7 @@
                         </template>
                     </a-input>
                 </a-form-item>
+                
                 <a-form-item name="displayName" label="Ingrese su nombre"
                     :rules="[{ required: true, whitespace: true, message: 'Ingresa nombre valido' }]">
                     <a-input v-model:value="userStore.userData.displayName" placeholder="Nombre">
@@ -23,15 +34,7 @@
                         </template>
                     </a-input>
                 </a-form-item>
-                <a-form-item>
-                    <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload"
-                        @change="handleChange">
-                        <a-button>
-                            <UploadOutlined />
-                            Subir imagen
-                        </a-button>
-                    </a-upload>
-                </a-form-item>
+                
                 <a-form-item>
                     <a-button type="primary" html-type="submit" :loading="userStore.loadingUser"
                         :disabled="!userStore.userData.email">Actualizar Información</a-button>

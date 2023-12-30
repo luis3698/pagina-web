@@ -1,9 +1,9 @@
 <template>
     <a-form name="addForm" autocomplete="off" layout="vertical" :model="formState" @finish="onFinish">
       <!-- Expresiones regulares para nombreR -->
-      <a-form-item name="nombreR" label="Ingrese una RECETA"
-        :rules="[{ required: true, whitespace: true,  message: 'Ingresa una RECETA válida' }]">
-        <a-input v-model:value="formState.nombreR" placeholder="https://antdv.com/components/icon" enter-button>
+      <a-form-item name="nombreR" label="Ingrese una receta"
+        :rules="[{ required: true, whitespace: true,  message: 'Ingresa una receta válida' }]">
+        <a-input v-model:value="formState.nombreR" placeholder="Nombre de la receta" enter-button>
           <template #prefix>
             <ChromeOutlined/>
           </template>
@@ -53,7 +53,7 @@
     ingredientes: [] // Agregamos el campo ingredientes al estado del formulario
   });
   
-  const listaDeIngredientes = ['']; // Puedes cargar esta lista dinámicamente
+  const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3']; // Puedes cargar esta lista dinámicamente
   
   const onFinish = async (value) => {
     const result = await databaseStore.addNombreR(formState.nombreR, formState.descripcionR, formState.ingredientes);

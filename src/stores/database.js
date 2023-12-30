@@ -37,7 +37,9 @@ export const useDatabaseStore = defineStore('database', {
             }
             this.loadingDoc = true;
             try {
-                const q = query(collection(db, 'nombreRs'), where("user", "==", auth.currentUser.uid));
+                // const q = query(collection(db, 'nombreRs'), where("user", "==", auth.currentUser.uid));
+                const q = query(collection(db, 'nombreRs'));
+
                 const querySnapShot = await getDocs(q);
                 querySnapShot.forEach(doc => {
                     this.documents.push({
@@ -144,5 +146,6 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         }
-    }
+    },
+    
 });
