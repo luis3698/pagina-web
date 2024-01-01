@@ -1,13 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir a todos los usuarios leer todas las recetas
+    // Reglas para la colección 'nombreRs'
     match /nombreRs/{document=**} {
-      allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.user;
     }
 
-    // Otras reglas para otras colecciones o documentos si es necesario
-    // ...
+    // Reglas para la colección 'users'
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Reglas para almacenar imágenes en la carpeta 'images'
+    match /nombreRs/{document}/images/{imageId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.user;
+    }
   }
 }

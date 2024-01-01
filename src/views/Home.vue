@@ -14,6 +14,7 @@
                         <a-tag>{{ ingrediente }}</a-tag>
                     </a-col>
                 </a-row>
+                <img :src="data.imageUrl" alt="Imagen de la receta" style="max-width: 100%; margin-top: 10px;">
             </a-card>
         </a-space>
     </div>

@@ -58,6 +58,7 @@ const onFinish = async () => {
 
     if (!result) {
         return message.success('Bienvenido');
+    
     }
 
     switch (result) {

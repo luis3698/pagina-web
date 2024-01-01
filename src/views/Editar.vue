@@ -29,6 +29,17 @@
                 </a-select-option>
             </a-select>
         </a-form-item>
+        <!-- Nuevo a-form-item para cargar imágenes -->
+<a-form-item name="image" label="Selecciona una imagen">
+    <a-upload
+      :before-upload="beforeUpload"
+      :customRequest="customRequest"
+      :showUploadList="false"
+    >
+      <a-button icon="upload">Seleccionar Imagen</a-button>
+    </a-upload>
+  </a-form-item>
+  
         <a-form-item>
             <a-button type="primary" html-type="submit" :loading="databaseStore.loading"
                 :disabled="databaseStore.loading">Editar nombreR</a-button>
@@ -49,29 +60,53 @@ const databaseStore = useDatabaseStore();
 const formState = reactive({
     nombreR: '',
     descripcionR: '',
-    ingredientes: [] // Agregamos el campo ingredientes al estado del formulario
+    ingredientes: [],
+    imageFile: null  // Agrega el campo imageFile al estado del formulario
 });
 
-const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3']; // Puedes cargar esta lista dinámicamente
+const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3'];
 
 const onFinish = async () => {
-    const result = await databaseStore.updateNombreR(route.params.id, formState.nombreR, formState.descripcionR, formState.ingredientes);
+    const result = await databaseStore.updateNombreRWithImage(route.params.id, formState.nombreR, formState.descripcionR, formState.ingredientes, formState.imageFile);
 
     if (!result) {
         formState.nombreR = '';
         formState.descripcionR = '';
-        formState.ingredientes = []; // Limpiamos el campo ingredientes después de editar
+        formState.ingredientes = [];
+        formState.imageFile = null;  // Limpia el campo imageFile después de editar
         return message.success('Se cambió correctamente ');
     }
 
     message.error('Ocurrió un error en el servidor');
 }
 
+const beforeUpload = (file) => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+        message.error('Solo puedes subir archivos de imagen!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+        message.error('La imagen debe ser más pequeña que 2MB!');
+    }
+    return isImage && isLt2M;
+};
+
+const customRequest = async ({ file, onSuccess, onError }) => {
+    try {
+        formState.imageFile = file;
+        onSuccess();
+    } catch (error) {
+        console.error(error);
+        onError();
+    }
+};
+
 onMounted(async () => {
     const data = await databaseStore.leerNombreR(route.params.id);
     formState.nombreR = data.name;
     formState.descripcionR = data.descripcionR || '';
-    formState.ingredientes = data.ingredientes || []; // Aseguramos que ingredientes esté presente, incluso si es null
+    formState.ingredientes = data.ingredientes || [];
 });
 </script>
 
