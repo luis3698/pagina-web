@@ -9,6 +9,10 @@ import Register from './views/Register.vue';
 import Editar from './views/Editar.vue';
 import Perfil from './views/Perfil.vue';
 import NotFound from './views/NotFound.vue';
+import RecetaDetalle from './views/RecetaDetalle.vue';
+
+
+
 
 
 const requireAuth = async (to, from, next) => {
@@ -43,8 +47,12 @@ const routes = [
     {
         path: '/',
         component: Home,
-        beforeEnter: requireAuth,
         name: 'home'
+    },
+    {
+        path: '/receta/:id',
+        name: 'RecetaDetalle',
+        component: RecetaDetalle,
     },
     {
         path: '/MisRecetas',
@@ -58,7 +66,6 @@ const routes = [
         beforeEnter: requireAuth,
         name: 'editar'
     },
-    ,
     {
         path: '/perfil',
         component: Perfil,
@@ -80,7 +87,7 @@ const routes = [
         component: NotFound,
         beforeEnter: redireccion,
         name: '404'
-    }
+    },
 ];
 
 const router = createRouter({

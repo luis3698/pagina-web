@@ -2,7 +2,7 @@
   <a-layout>
     <a-layout-header v-if="!userStore.loadingSession" :style="{lineHeight: '64px',  display: 'flex', justifyContent: 'space-between'}">
       <a-menu theme="dark" mode="horizontal" v-model:selectedKeys="selectedKeys" :style="{width: '50%'}">
-        <a-menu-item v-if="userStore.userData" key="home">
+        <a-menu-item  key="home">
           <router-link to="/">Home</router-link>
         </a-menu-item>
         

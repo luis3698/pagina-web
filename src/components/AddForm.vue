@@ -66,7 +66,7 @@ const formState = reactive({
   imageFile: null  // Agrega el campo imageFile al estado del formulario
 });
 
-const listaDeIngredientes = ['Ingrediente1', 'Ingrediente2', 'Ingrediente3'];
+const listaDeIngredientes = [''];
 
 const onFinish = async () => {
   const result = await databaseStore.addNombreRWithImage(formState.nombreR, formState.descripcionR, formState.ingredientes, formState.imageFile);
