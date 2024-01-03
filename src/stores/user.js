@@ -1,5 +1,5 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth'
-import { doc, setDoc, getDoc } from 'firebase/firestore/lite';
+import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth'
+import { doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore/lite';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { defineStore } from 'pinia'
 import { auth, db, storage } from '../firebaseConfig';
@@ -102,6 +102,30 @@ export const useUserStore = defineStore('userStore', {
                 this.loadingUser = false;
             }
         },
+        async deleteUserAccount() {
+            try {
+                this.loadingUser = true;
+                const user = auth.currentUser;
+    
+                // Eliminar documento de usuario en Firestore (si lo tienes)
+                const userDocRef = doc(db, 'users', user.uid);
+                await deleteDoc(userDocRef);
+    
+                // Eliminar cuenta de autenticación
+                await deleteUser(auth.currentUser);
+    
+                // Limpiar datos locales
+                this.userData = null;
+    
+                // Redirigir a la página de inicio de sesión
+                router.push('/login');
+            } catch (error) {
+                console.error(error);
+                return error.code;
+            } finally {
+                this.loadingUser = false;
+            }
+        },
         currentUser() {
             return new Promise((resolve, reject) => {
                 const unsuscribe = onAuthStateChanged(auth, async(user) => {
@@ -123,6 +147,7 @@ export const useUserStore = defineStore('userStore', {
                 }, (e) => reject(e));
                 unsuscribe();
             });
-        }
-    }
+        },
+        
+    },
 })

@@ -33,7 +33,6 @@
     </a-form-item>
 
     <!-- Nuevo a-form-item para cargar imágenes -->
-    <!-- Nuevo a-form-item para cargar imágenes -->
 <a-form-item name="image" label="Selecciona una imagen">
   <a-upload
     :before-upload="beforeUpload"

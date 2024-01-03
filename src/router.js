@@ -9,7 +9,7 @@ import Register from './views/Register.vue';
 import Editar from './views/Editar.vue';
 import Perfil from './views/Perfil.vue';
 import NotFound from './views/NotFound.vue';
-import RecetaDetalle from './views/RecetaDetalle.vue';
+import RecetaCompleta from "./views/RecetaCompleta.vue"
 
 
 
@@ -51,9 +51,10 @@ const routes = [
     },
     {
         path: '/receta/:id',
-        name: 'RecetaDetalle',
-        component: RecetaDetalle,
-    },
+        component: RecetaCompleta,
+        name: 'recetaCompleta',
+        props: true,
+      },
     {
         path: '/MisRecetas',
         component: MisRecetas,

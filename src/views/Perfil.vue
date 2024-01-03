@@ -1,5 +1,6 @@
 <template>
-    <h1 class="text-center">{{ userStore.userData.displayName }}</h1>
+    <h1 class="text-center">{{ userStore.userData ? userStore.userData.displayName : 'Usuario sin nombre' }}</h1>
+
     <!-- <p>{{ userStore.userData }}</p> -->
     <div class="text-center">
         <a-avatar :src="userStore.userData.photoUrl" :size="150"></a-avatar>
@@ -39,6 +40,17 @@
                     <a-button type="primary" html-type="submit" :loading="userStore.loadingUser"
                         :disabled="!userStore.userData.email">Actualizar Información</a-button>
                 </a-form-item>
+
+                <a-button type="danger" @click="confirmDeleteAccount" :loading="userStore.loadingUser" :disabled="userStore.loadingUser">
+                    Eliminar cuenta
+                </a-button>
+                
+                <!-- Modal para confirmar la eliminación de la cuenta -->
+                <a-modal v-model:visible="modalVisible" title="Confirmar eliminación de cuenta" @ok="deleteAccount" @cancel="modalVisible = false">
+                    ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.
+                </a-modal>
+                
+
             </a-form>
         </a-col>
     </a-row>
@@ -52,6 +64,8 @@ import { ref } from 'vue';
 
 const userStore = useUserStore();
 const fileList = ref([]);
+const modalVisible = ref(false);
+
 
 const beforeUpload = (file) => {
     fileList.value = [...fileList.valuem, file];
@@ -105,10 +119,30 @@ const onFinish = async () => {
         return message.success('Se actualizo tu informacion');
     }
     message.error('Ocuerrio un error')
-}
+};
 
 const onFinishFailed = () => {
 
-}
+};
+
+const confirmDeleteAccount = () => {
+  // Mostrar el modal de confirmación
+  modalVisible.value = true;
+};
+
+const deleteAccount = async () => {
+  // Ocultar el modal
+  modalVisible.value = false;
+
+  // Llamar a la función deleteUserAccount de useUserStore
+  const result = await userStore.deleteUserAccount();
+
+  // Manejar el resultado (puedes mostrar un mensaje de éxito o error)
+  if (!result) {
+    message.success('Tu cuenta ha sido eliminada correctamente.');
+  } else {
+    message.error('Error al eliminar la cuenta. Por favor, inténtalo de nuevo.');
+  }
+};
 </script>
 <style></style>     

@@ -8,7 +8,7 @@
                     :rules="[{ required: true, whitespace: true, message: 'Ingresa un email', type: 'email' }]">
                     <a-tooltip placement="bottom">
                         <template #title>
-                            <span>j********@gmail.com.mx</span>
+                            <span>ejemplo@gmail.com.mx</span>
                         </template>
                         <a-input v-model:value="formState.email" placeholder="Email">
                             <template #prefix>

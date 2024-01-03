@@ -152,34 +152,6 @@ export const useDatabaseStore = defineStore('database', {
             }
         },
 
-        // Función para agregar una receta sin imagen
-        async addNombreR(name, descripcionR, ingredientes) {
-            this.loading = true;
-            try {
-                // Objeto de la receta
-                const objectDoc = {
-                    name,
-                    descripcionR,
-                    ingredientes,
-                    short: nanoid(6),
-                    user: auth.currentUser.uid
-                }
-                // Almacena la receta en la base de datos
-                await setDoc(doc(db, "nombreRs", objectDoc.short), objectDoc);
-                // Actualiza el estado del almacén con la nueva receta
-                this.documents.push({
-                    ...objectDoc,
-                    id: objectDoc.short
-                });
-            } catch (error) {
-                // Manejo de errores
-                console.log(error.code);
-                return error.code;
-            } finally {
-                this.loading = false;
-            }
-        },
-
         // Función para leer una receta por su ID
         async leerNombreR(id) {
             try {
@@ -205,42 +177,6 @@ export const useDatabaseStore = defineStore('database', {
                 return error.code;
             } finally {
                 // Acciones adicionales después de la operación
-            }
-        },
-
-        // Función para actualizar una receta sin imagen
-        async updateNombreR(id, name, descripcionR, ingredientes) {
-            this.loading = true;
-            try {
-                // Referencia al documento de la receta en la base de datos
-                const docRef = doc(db, 'nombreRs', id);
-
-                // Obtiene el documento existente
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) {
-                    throw new Error("No existe el documento");
-                }
-                // Verifica si el usuario tiene permisos para actualizar
-                if (docSnap.data().user !== auth.currentUser.uid) {
-                    throw new Error("Este documento no se puede actualizar");
-                }
-
-                // Actualiza el documento en la base de datos
-                await updateDoc(docRef, {
-                    name,
-                    descripcionR,
-                    ingredientes
-                });
-                // Actualiza el estado del almacén con la receta actualizada
-                this.documents = this.documents.map((item) => item.id === id ? ({ ...item, name, descripcionR, ingredientes }): item);
-                // Redirige a la página principal
-                router.push('/');
-            } catch (error) {
-                // Manejo de errores
-                console.log(error.code);
-                return error.code;
-            } finally {
-                this.loading = false;
             }
         },
 
@@ -297,5 +233,21 @@ export const useDatabaseStore = defineStore('database', {
                 this.loadingDoc = false;
             }
         },
+        async getUserById(userId) {
+            try {
+                const userDocRef = doc(db, 'users', userId);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    return userDocSnap.data();
+                } else {
+                    throw new Error('No existe el usuario');
+                }
+            } catch (error) {
+                console.error('Error al obtener la información del usuario:', error);
+                throw error;
+            }
+        },
+        
     },
 });
