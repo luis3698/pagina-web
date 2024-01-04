@@ -9,7 +9,9 @@ import Register from './views/Register.vue';
 import Editar from './views/Editar.vue';
 import Perfil from './views/Perfil.vue';
 import NotFound from './views/NotFound.vue';
-import RecetaCompleta from "./views/RecetaCompleta.vue"
+import RecetaCompleta from "./views/RecetaCompleta.vue";
+import MeGusta from "./views/MeGusta.vue"
+
 
 
 
@@ -60,6 +62,12 @@ const routes = [
         component: MisRecetas,
         beforeEnter: requireAuth,
         name: 'misrecetas'
+    },
+    {
+        path: '/megusta',
+        component: MeGusta,
+        beforeEnter: requireAuth,
+        name: 'meGusta'
     },
     {
         path: '/editar/:id',

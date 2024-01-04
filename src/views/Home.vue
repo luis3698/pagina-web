@@ -8,15 +8,22 @@
       <a-card v-for="data in databaseStore.documents" :key="data.id" :title="data.name" class="recipe-card">
         <div class="recipe-content">
           <img :src="data.imageUrl" alt="Imagen de la receta" class="recipe-image">
-          <a-button type="primary" @click="verRecetaCompleta(data)">Ver Receta Completa</a-button>
+          <a-button type="primary" @click="verRecetaCompleta(data)">Ver más</a-button>
+
+          <!-- Botón de Me gusta -->
+          <a class="like-button" @click="() => toggleLike(data.id)" :loading="databaseStore.loading" :icon="[]">
+            {{ data.likes ? data.likes.length : 0 }} ❤️
+          </a>
         </div>
       </a-card>
     </div>
   </div>
 </template>
 
+
 <script setup>
 import { useDatabaseStore } from '../stores/database';
+import { useRouter } from 'vue-router';
 const databaseStore = useDatabaseStore();
 
 // Obtener todas las recetas de todos los usuarios
@@ -26,9 +33,20 @@ const verRecetaCompleta = (receta) => {
   // Implementa la lógica para mostrar la receta completa
   router.push({ name: 'recetaCompleta', params: { id: receta.id } });
 };
-import { useRouter } from 'vue-router';
+
+// Asigna toggleLike del almacén a una variable local
+const toggleLike = async (id) => {
+  await databaseStore.toggleLike(id);
+  // Actualiza la propiedad 'liked' en la receta correspondiente
+  const index = databaseStore.documents.findIndex(item => item.id === id);
+  databaseStore.documents[index].liked = !databaseStore.documents[index].liked;
+};
+
+
 const router = useRouter();
 </script>
+
+
 
 <style scoped>
 /* Contenedor principal */
@@ -74,6 +92,19 @@ a-button {
   width: 100%;
   margin-top: 10px; /* Ajusta según sea necesario */
 }
+.like-button {
+  border: none; /* Elimina el borde del botón */
+  background-color: transparent; /* Fondo transparente */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+
+  /* Agrega transiciones para efectos visuales */
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.like-button:hover {
+  transform: scale(1.2); /* Efecto de escala al pasar sobre el botón */
+  color: red; /* Cambia el color al pasar sobre el botón */
+}
 </style>
 
 <style scoped>
@@ -82,6 +113,18 @@ a-button {
   .recipe-grid {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* Cambia a una columna en dispositivos más pequeños */
   }
+
+  /* Botón de Me gusta */
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Icono de Me gusta */
+.like-icon {
+  color: red;  /* Color cuando está seleccionado */
+}
 
   .recipe-card {
     margin-bottom: 20px; /* Añade espacio entre tarjetas en dispositivos más pequeños */

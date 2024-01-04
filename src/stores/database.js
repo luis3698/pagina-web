@@ -2,10 +2,11 @@
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { defineStore } from 'pinia';
-import { db, storage } from '../firebaseConfig';  // Asegúrate de importar el objeto 'storage' desde firebaseConfig
+import { db, storage } from '../firebaseConfig';
 import { auth } from '../firebaseConfig';
 import { nanoid } from 'nanoid'
 import router from '../router';
+import { reactive } from 'vue';  // Importa la función reactive de Vue.js
 
 // Definición del almacén
 export const useDatabaseStore = defineStore('database', {
@@ -28,14 +29,15 @@ export const useDatabaseStore = defineStore('database', {
                 const imageUrl = await getDownloadURL(imageRef);
 
                 // Objeto de la receta
-                const objectDoc = {
+                const objectDoc = reactive({
                     name,
                     descripcionR,
                     ingredientes,
-                    imageUrl,  // Agrega la URL de la imagen a la receta
+                    imageUrl,
                     short: nanoid(6),
-                    user: auth.currentUser.uid
-                }
+                    user: auth.currentUser.uid,
+                    likes: []  // Inicializa likes como un array vacío
+                });
 
                 // Almacena la receta en la base de datos
                 await setDoc(doc(db, "nombreRs", objectDoc.short), objectDoc);
@@ -52,7 +54,6 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         },
-
         // Función para actualizar una receta con imagen
         async updateNombreRWithImage(id, name, descripcionR, ingredientes, imageFile) {
             this.loading = true;
@@ -97,7 +98,6 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         },
-
         // Función para obtener una receta por su ID
         async getNombreR(id) {
             try {
@@ -121,7 +121,6 @@ export const useDatabaseStore = defineStore('database', {
                 // Acciones adicionales después de la operación
             }
         },
-
         // Función para obtener todas las recetas del usuario actual
         async getNombreRs() {
             // Verifica si ya se cargaron las recetas
@@ -151,7 +150,6 @@ export const useDatabaseStore = defineStore('database', {
                 this.loadingDoc = false;
             }
         },
-
         // Función para leer una receta por su ID
         async leerNombreR(id) {
             try {
@@ -179,7 +177,6 @@ export const useDatabaseStore = defineStore('database', {
                 // Acciones adicionales después de la operación
             }
         },
-
         // Función para eliminar una receta
         async deleteNombreR(id) {
             try {
@@ -211,7 +208,6 @@ export const useDatabaseStore = defineStore('database', {
                 this.loading = false;
             }
         },
-
         // Función para obtener todas las recetas (de todos los usuarios)
         async getAllNombreRs() {
             this.loadingDoc = true;
@@ -246,6 +242,37 @@ export const useDatabaseStore = defineStore('database', {
             } catch (error) {
                 console.error('Error al obtener la información del usuario:', error);
                 throw error;
+            }
+        },
+         // Función para manejar el me gusta de una receta
+         async toggleLike(id) {
+            try {
+                const docRef = doc(db, 'nombreRs', id);
+                const docSnap = await getDoc(docRef);
+        
+                if (!docSnap.exists()) {
+                    throw new Error("No existe el documento");
+                }
+        
+                const userId = auth.currentUser.uid;
+                const likes = docSnap.data().likes || [];
+        
+                if (likes.includes(userId)) {
+                    // Quitar el me gusta
+                    const updatedLikes = likes.filter(user => user !== userId);
+                    await updateDoc(docRef, { likes: updatedLikes });
+                    // Actualiza localmente la propiedad likes de la receta
+                    this.documents = this.documents.map(item => (item.id === id ? { ...item, likes: updatedLikes } : item));
+                } else {
+                    // Dar me gusta
+                    const updatedLikes = [...likes, userId];
+                    await updateDoc(docRef, { likes: updatedLikes });
+                    // Actualiza localmente la propiedad likes de la receta
+                    this.documents = this.documents.map(item => (item.id === id ? { ...item, likes: updatedLikes } : item));
+                }
+            } catch (error) {
+                console.error('Error al manejar el me gusta:', error);
+                return error.code;
             }
         },
         

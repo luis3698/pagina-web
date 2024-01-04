@@ -5,11 +5,14 @@ import { createPinia } from 'pinia';
 import 'ant-design-vue/es/message/style/css';
 import { auth } from './firebaseConfig'; // Asegúrate de importar tu configuración de Firebase
 import { useUserStore } from './stores/user';
+import 'ant-design-vue/dist/antd.css';
+
 
 const app = createApp(App);
 const pinia = createPinia();
 
 app.use(router).use(pinia);
+
 
 // Manejar el estado del usuario al inicio de la aplicación
 const userStore = useUserStore();
