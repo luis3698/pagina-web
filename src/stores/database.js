@@ -1,3 +1,4 @@
+//database.js
 // Importaciones
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -16,6 +17,12 @@ export const useDatabaseStore = defineStore('database', {
         loading: false
     }),
     actions: {
+
+         // Nueva función para realizar la búsqueda en el almacén
+        searchRecipesInStore(term) {
+            const lowerCaseTerm = term.toLowerCase();
+            return this.documents.filter(recipe => recipe.name.toLowerCase().includes(lowerCaseTerm));
+        },
         // Función para agregar una receta con imagen
         async addNombreRWithImage(name, descripcionR, ingredientes, imageFile) {
             this.loading = true;
@@ -229,6 +236,7 @@ export const useDatabaseStore = defineStore('database', {
                 this.loadingDoc = false;
             }
         },
+         // Función para obtener información de un usuario por su ID
         async getUserById(userId) {
             try {
                 const userDocRef = doc(db, 'users', userId);

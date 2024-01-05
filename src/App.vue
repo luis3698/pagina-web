@@ -25,15 +25,6 @@
       </a-menu>
 
 
-
-      <div class="search-container" v-if="isHomeView">
-        <a-input
-          placeholder="Buscar receta..."
-          :style="{ width: '200px', marginRight: '16px' }"
-          v-model="searchQuery"
-          @change="handleSearch"
-        />
-      </div>
       
 
       <!-- Menú derecho -->
@@ -83,13 +74,14 @@
       </a-menu>
     </a-layout-header>
 
-    <!-- Contenido principal -->
-    <a-layout-content style="padding: 0 16px">
-      <div class="container">
-        <div v-if="userStore.loadingSession">Loading ...</div>
-        <router-view v-else></router-view>
-      </div>
-    </a-layout-content>
+   <!-- Contenido principal -->
+<a-layout-content style="padding: 0 16px; margin-top: 64px;">
+  <div class="container">
+    <div  v-if="userStore.loadingSession">Loading ...</div>
+    <router-view v-else></router-view>
+  </div>
+</a-layout-content>
+
 
 
     <footer class="footer">
@@ -121,7 +113,7 @@ import { useUserStore } from './stores/user';
 import { useRoute } from 'vue-router';
 import { LogoutOutlined } from '@ant-design/icons-vue';
 
-
+import SearchBar from './components/SearchBar.vue';
 
 const userStore = useUserStore();
 
