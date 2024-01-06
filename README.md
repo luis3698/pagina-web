@@ -16,9 +16,9 @@ Crea, elimina y edita tus propias recetas. Explora y visualiza recetas de otros 
 ### Interacción con Recetas ❤️
 Da "me gusta" a las recetas de otros usuarios y filtra las recetas según diferentes criterios.
 
-## Gif Divertido
+## Gif Pagina
 
-<img src="./src/assets/gif.gif" alt="Un gif muy divertido" width="300" height="200">
+<img src="./src/assets/gif.gif" alt="Un gif muy divertido" width="500" height="300">
 
 
 ## Estructura de Carpetas 📁
