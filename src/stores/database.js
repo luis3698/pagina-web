@@ -18,7 +18,7 @@ export const useDatabaseStore = defineStore('database', {
     }),
     actions: {
 
-         // Nueva función para realizar la búsqueda en el almacén
+         //función para realizar la búsqueda en el almacén
         searchRecipesInStore(term) {
             const lowerCaseTerm = term.toLowerCase();
             return this.documents.filter(recipe => recipe.name.toLowerCase().includes(lowerCaseTerm));
@@ -283,6 +283,42 @@ export const useDatabaseStore = defineStore('database', {
                 return error.code;
             }
         },
+         // Función para agregar un comentario a una receta
+         async addComment(id, texto) {
+            try {
+                const docRef = doc(db, 'nombreRs', id);
+                const docSnap = await getDoc(docRef);
+        
+                if (!docSnap.exists()) {
+                    throw new Error("No existe el documento");
+                }
+        
+                const userId = auth.currentUser.uid;
+                const comentarios = docSnap.data().comentarios || [];
+        
+                // Obtén la información del usuario actual
+                const usuarioActual = await this.getUserById(userId);
+        
+                // Agregar el nuevo comentario con información del usuario
+                const nuevoComentario = {
+                    usuario: {
+                        userId: userId,
+                        displayName: usuarioActual.displayName,
+                        photoUrl: usuarioActual.photoUrl,
+                    },
+                    texto,
+                };
+        
+                await updateDoc(docRef, { comentarios: [...comentarios, nuevoComentario] });
+        
+                // Actualiza localmente la propiedad comentarios de la receta
+                this.documents = this.documents.map(item => (item.id === id ? { ...item, comentarios: [...comentarios, nuevoComentario] } : item));
+            } catch (error) {
+                console.error('Error al agregar el comentario:', error);
+                return error.code;
+            }
+        },
+        
         
     },
 });
