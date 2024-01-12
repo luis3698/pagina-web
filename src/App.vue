@@ -19,8 +19,8 @@
           <router-link to="#">Sobre nosostros</router-link>
         </a-menu-item>
 
-        <a-menu-item key="#3">
-          <router-link to="#">Blog</router-link>
+        <a-menu-item key="blog">
+          <router-link to="/blog">Blog</router-link>
         </a-menu-item>
       </a-menu>
 
@@ -75,35 +75,16 @@
     </a-layout-header>
 
    <!-- Contenido principal -->
-<a-layout-content style="padding: 0 16px; margin-top: 64px;">
+<a-layout-content style="padding: 0 px; margin-top: 64px;">
   <div class="container">
     <div  v-if="userStore.loadingSession">Loading ...</div>
     <router-view v-else></router-view>
   </div>
-</a-layout-content>
+//</a-layout-content>
 
 
-
-    <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-logo">
-          <!-- Tu logo aquí -->
-          <img src="./assets/logo.png" alt="Logo" />
-        </div>
-  
-        <div class="footer-words">
-          <span @click="handleWordClick('Opción 1')">Preguntas grecuentes</span>
-          <span @click="handleWordClick('Opción 2')">contactanos</span>
-          <span @click="handleWordClick('Opción 3')">eventos</span>
-          <span @click="handleWordClick('Opción 4')">terminos y condiciones</span>
-          <span @click="handleWordClick('Opción 5')">Opción 5</span>
-        </div>
-  
-        <div class="footer-company">
-          <p>Company 2024</p>
-        </div>
-      </div>
-    </footer>
+<!--<Footer />-->
+   
   </a-layout>
 </template>
 
@@ -113,7 +94,10 @@ import { useUserStore } from './stores/user';
 import { useRoute } from 'vue-router';
 import { LogoutOutlined } from '@ant-design/icons-vue';
 
-import SearchBar from './components/SearchBar.vue';
+
+
+
+
 
 const userStore = useUserStore();
 
@@ -139,7 +123,7 @@ watch(() => route.name, () => {
 <style>
 .container {
   background-color: #fff;
-  padding: 24px;
+  padding: px;
   min-height: calc(100vh - 64px);
 }
 

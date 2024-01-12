@@ -1,33 +1,38 @@
 <template>
-  <div>
-    <!-- Encabezado -->
-    <h1>Recetas de Todos los Usuarios</h1>
+  <div class="recipe-app">
+    <header class="app-header">
+      <h1>Recetas de la Comunidad</h1>
+      <div class="search-container">
+        <input v-model="searchTerm" placeholder="Buscar receta" class="search-input" />
+        <button @click="searchRecipes" class="search-button">Buscar</button>
+      </div>
+    </header>
 
-    <!-- Barra de búsqueda -->
-    <div class="search-container">
-      <input type="text" v-model="searchTerm" placeholder="Buscar receta" class="search-input">
-      <button type="primary" @click="searchRecipes" class="search-button">Buscar</button>
-    </div>
+    
 
-  <p v-if="databaseStore.loadingDoc">Cargando recetas...</p>
-    <!-- Contenedor de recetas -->
-    <div class="recipe-grid" v-if="!databaseStore.loadingDoc">
-      <!-- Tarjetas de receta -->
-      <a-card v-for="data in filteredRecipes" :key="data.id" :title="data.name" class="recipe-card">
-        <div class="recipe-content">
-          <!-- Imagen de la receta -->
-          <img :src="data.imageUrl" alt="Imagen de la receta" class="recipe-image">
-
-          <!-- Botón para ver más detalles de la receta -->
-          <a-button type="primary" @click="verRecetaCompleta(data)">Ver más</a-button>
-
-          <!-- Botón de Me gusta -->
-          <a class="like-button" @click="() => toggleLike(data.id)" :loading="databaseStore.loading" :icon="[]">
-            <i class="heart-icon">❤️</i> {{ data.likes ? data.likes.length : 0 }}
-          </a>
+    <section class="recipe-container">
+      <div v-if="databaseStore.loadingDoc" class="loading-message">Cargando recetas...</div>
+      <div v-else>
+        <div v-if="filteredRecipes.length === 0" class="no-results-message">No se encontraron recetas.</div>
+        <div class="recipe-grid" v-else>
+          <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
+            <img :src="recipe.imageUrl" alt="Imagen de la receta" class="recipe-image" />
+            <div class="recipe-details">
+              <div class="title-container">
+                <h2>{{ recipe.name }}</h2>
+              </div>
+              <p>{{ recipe.description }}</p>
+            </div>
+            <div class="recipe-actions">
+              <button @click="toggleLike(recipe.id)" :class="{ liked: recipe.liked }" class="like-button">
+                <i class="heart-icon">❤️</i> {{ recipe.likes ? recipe.likes.length : 0 }}
+              </button>
+              <router-link :to="{ name: 'recetaCompleta', params: { id: recipe.id }}" class="view-button">Ver más</router-link>
+            </div>
+          </div>
         </div>
-      </a-card>
-    </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -39,13 +44,9 @@ import { useRouter } from 'vue-router';
 const databaseStore = useDatabaseStore();
 const router = useRouter();
 
-// Configuración para la búsqueda
 const searchTerm = ref('');
-
-// Filtrar recetas según el término de búsqueda
 const filteredRecipes = ref([]);
 
-// Función para buscar recetas
 const searchRecipes = () => {
   const term = searchTerm.value.toLowerCase();
   if (term) {
@@ -55,142 +56,138 @@ const searchRecipes = () => {
   }
 };
 
-// Obtener todas las recetas de todos los usuarios
 databaseStore.getAllNombreRs();
 
-// Actualizar la lista filtrada cuando cambia la lista completa
 watch(() => databaseStore.documents, () => {
   searchRecipes();
 });
 
-// Función para ver la receta completa
-const verRecetaCompleta = (receta) => {
-  // Implementa la lógica para mostrar la receta completa
-  router.push({ name: 'recetaCompleta', params: { id: receta.id } });
-};
-
-// Asigna toggleLike del almacén a una variable local
 const toggleLike = async (id) => {
   await databaseStore.toggleLike(id);
-  // Actualiza la propiedad 'liked' en la receta correspondiente
   const index = databaseStore.documents.findIndex(item => item.id === id);
   databaseStore.documents[index].liked = !databaseStore.documents[index].liked;
 };
 </script>
 
 <style scoped>
-/* Contenedor principal */
+.recipe-app {
+  font-family: 'Arial', sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #ffffff00; /* Cambia este color según tus preferencias */
+}
+
+.app-header {
+  background-color: #f79f1b;
+  color: #242636;
+  padding: 20px;
+  text-align: center;
+}
+
+.search-container {
+  margin-top: 20px;
+}
+
+.search-input {
+  padding: 10px;
+  width: 500px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: #242636;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.recipe-container {
+  padding: 20px;
+}
+
+.loading-message, .no-results-message {
+  text-align: center;
+  margin-top: 20px;
+}
+
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Cuatro columnas por fila por defecto */
-  gap: 20px; /* Espacio entre tarjetas */
-  padding: 20px; /* Espacio extra en el contenedor principal */
-}
-/* Barra de búsqueda */
-.search-input {
-  flex: 1; /* El input ocupa todo el espacio disponible */
-  padding: 8px; /* Ajusta según sea necesario */
-  border: 1px solid #ccc; /* Borde del input */
-  border-radius: 4px; /* Bordes redondeados */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 }
 
-/* Botón de búsqueda */
-.search-button {
-  padding: 8px 16px; /* Ajusta según sea necesario */
-  border: none; /* Elimina el borde del botón */
-  border-radius: 4px; /* Bordes redondeados */
-  background-color: #007bff; /* Color del botón */
-  color: #fff; /* Color del texto del botón */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-}
-.search-container {
-  display: flex;
-  gap: 10px; /* Espacio entre el input y el botón */
-  margin-bottom: 20px; /* Ajusta según sea necesario */
-}
-/* Tarjeta de receta */
 .recipe-card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
-  box-sizing: border-box;
-  overflow: hidden; /* Evita que el contenido sobresalga */
-}
-
-.recipe-card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Contenido de la receta */
-.recipe-content {
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
-  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-/* Imagen de la receta */
 .recipe-image {
   width: 100%;
-  height: auto;
-  max-height: 100%; /* Ajusta según sea necesario */
-  object-fit: cover; /* Ajusta el tamaño de la imagen sin distorsionarla */
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px; /* Bordes redondos */
 }
 
-/* Botón de ver receta completa */
-a-button {
-  width: 100%;
-  margin-top: 10px; /* Ajusta según sea necesario */
+.recipe-details {
+  flex: 1;
+  padding: 15px;
+  max-height: 100px; /* ajusta este valor según sea necesario */
+  overflow: hidden;
 }
 
-/* Estilo para el botón de Me gusta */
+.title-container {
+  margin-bottom: 10px;
+}
+
+.title-container h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.recipe-details p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.recipe-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Centra verticalmente el contenido */
+  margin-top: 10px; /* Añade espacio entre el contenido y los botones */
+}
+
+.view-button {
+  padding: 10px 20px;
+  background-color: #242636;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .like-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 30px; /* Ancho del botón */
-  height: 30px; /* Altura del botón */
-  border-radius: 50%; /* Hace el botón redondo */
-  border: none; /* Elimina el borde del botón */
-  background-color: transparent; /* Fondo transparente */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out; /* Agrega transiciones para efectos visuales */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
 
-.like-button:hover {
-  transform: scale(1.2); /* Efecto de escala al pasar sobre el botón */
-  color: red; /* Cambia el color al pasar sobre el botón */
+.like-button i {
+  margin-right: 5px;
+  color: red;
 }
 
-/* Estilo para el ícono del corazón */
-.heart-icon {
-  font-size: 16px; /* Tamaño del ícono del corazón */
-}
-
-</style>
-
-<style scoped>
-/* Estilos adicionales para hacerlo más responsive en tablets y celulares */
-@media screen and (max-width: 768px) {
-  .recipe-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* Cambia a una columna en dispositivos más pequeños */
-  }
-
-  /* Botón de Me gusta */
-  .like-button {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  /* Icono de Me gusta */
-  .like-icon {
-    color: red;  /* Color cuando está seleccionado */
-  }
-
-  .recipe-card {
-    margin-bottom: 20px; /* Añade espacio entre tarjetas en dispositivos más pequeños */
-  }
+.like-button.liked i {
+  color: #ff4500;
 }
 </style>
