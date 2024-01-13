@@ -1,6 +1,5 @@
 <template>
   <div class="recipe-container">
-    <!-- Información del creador en la parte superior -->
     <div v-if="receta.createdBy" class="creator-info">
       <img :src="receta.createdBy.photoUrl" alt="Foto de perfil del creador" class="creator-avatar">
       <div class="creator-text">
@@ -17,34 +16,31 @@
       <li v-for="(ingrediente, index) in receta.ingredientes" :key="index" class="ingredient-item">{{ ingrediente }}</li>
     </ul>
 
-    <!-- Botón de Me gusta -->
-    <a-button @click="toggleLike" :loading="databaseStore.loading" :icon="[]">
-      {{ receta.likes ? receta.likes.length : 0 }} ❤️
-    </a-button>
+    <div class="interactions-section">
+      <a-button @click="toggleLike" :loading="databaseStore.loading" :icon="[]">
+        {{ receta.likes ? receta.likes.length : 0 }} ❤️
+      </a-button>
 
-    <!-- Mostrar comentarios -->
-    <div class="comments-section">
-      <h2>Comentarios</h2>
-      <div v-for="(comentario, index) in receta.comentarios" :key="index" class="comment-container">
-        <!-- Línea divisoria entre comentarios -->
-        <div v-if="index !== 0" class="divider"></div>
-        <!-- Mostrar la foto del usuario que hizo el comentario -->
-        <div class="comment-info">
-          <img :src="comentario.usuario.photoUrl" alt="Foto de perfil del usuario" class="comment-avatar">
-          <div class="comment-content">
-            <div class="comment-header">
-              <p class="comment-username"><strong>{{ comentario.usuario.displayName }}</strong></p>
+      <div class="comments-section">
+        <h2>Comentarios</h2>
+        <div v-for="(comentario, index) in receta.comentarios" :key="index" class="comment-container">
+          <div v-if="index !== 0" class="divider"></div>
+          <div class="comment-info">
+            <img :src="comentario.usuario.photoUrl" alt="Foto de perfil del usuario" class="comment-avatar">
+            <div class="comment-content">
+              <div class="comment-header">
+                <p class="comment-username"><strong>{{ comentario.usuario.displayName }}</strong></p>
+              </div>
+              <p class="comment-text">{{ comentario.texto }}</p>
             </div>
-            <p class="comment-text">{{ comentario.texto }}</p>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Agregar comentario -->
-    <div class="add-comment-section">
-      <textarea v-model="nuevoComentario" placeholder="Añade un comentario" class="comment-input"></textarea>
-      <a-button @click="agregarComentario" class="add-comment-button">Agregar Comentario</a-button>
+      <div class="add-comment-section">
+        <textarea v-model="nuevoComentario" placeholder="Añade un comentario" class="comment-input"></textarea>
+        <a-button @click="agregarComentario" class="add-comment-button">Agregar Comentario</a-button>
+      </div>
     </div>
   </div>
 </template>
@@ -99,16 +95,14 @@ const agregarComentario = async () => {
 
 
 <style scoped>
-/* Estilos para la vista de RecipeCompleta */
-
 .recipe-container {
-  max-width: 1000px;
+  max-width: 90%;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ddd;
+  
+  color: #000000;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center; /* Para centrar el contenido */
 }
 
 .creator-info {
@@ -138,15 +132,16 @@ const agregarComentario = async () => {
 }
 
 .recipe-image {
-  max-width: 70%;
+  max-width: 100%;
   height: auto;
   margin-bottom: 20px;
+  border-radius: 8px;
 }
 
 .recipe-description {
   text-align: justify;
-  max-height: 250px; /* Altura máxima antes de activar el scroll */
-  overflow-y: auto; /* Activar el scroll si se supera la altura máxima */
+  max-height: 250px;
+  overflow-y: auto;
   margin-bottom: 20px;
 }
 
@@ -154,23 +149,23 @@ const agregarComentario = async () => {
   list-style-type: none;
   padding: 0;
   display: flex;
-  flex-wrap: wrap; /* Hace que los ingredientes se muestren en una fila de 3 */
-  justify-content: space-between; /* Espaciado entre los ingredientes */
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .ingredient-list li {
-  width: 30%; /* Ajustar el ancho para que haya tres elementos por fila */
+  width: 30%;
   margin-bottom: 8px;
 }
 
-/* Línea divisoria entre comentarios */
-.divider {
-  border-top: 1px solid #ddd;
-  margin: 15px 0;
+.interactions-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .comments-section {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .comment-container {
@@ -188,8 +183,8 @@ const agregarComentario = async () => {
 .comment-avatar {
   border-radius: 50%;
   margin-right: 10px;
-  width: 40px; /* Tamaño ajustado */
-  height: 40px; /* Tamaño ajustado */
+  width: 40px;
+  height: 40px;
 }
 
 .comment-content {
@@ -211,7 +206,6 @@ const agregarComentario = async () => {
   margin: 15px;
 }
 
-
 .add-comment-section {
   margin-top: 20px;
 }
@@ -219,11 +213,30 @@ const agregarComentario = async () => {
 .comment-input {
   width: 100%;
   margin-bottom: 10px;
-  padding: 5px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  color: #242636;
 }
 
 .add-comment-button {
-  width: 20%;
-  background-color: primary;
+  width: 100%;
+  background-color: #f79f1b;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-comment-button:hover {
+  background-color: #e88b10;
+}
+
+.divider {
+  border-top: 1px solid #ddd;
+  margin: 15px 0;
 }
 </style>

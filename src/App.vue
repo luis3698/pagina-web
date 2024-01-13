@@ -11,6 +11,10 @@
           <router-link to="/">Home</router-link>
         </a-menu-item>
 
+        <a-menu-item key="recetas">
+          <router-link to="/recetas">Recetas</router-link>
+        </a-menu-item>
+
         <a-menu-item key="#1">
           <router-link to="#">FAQ (Preguntas Frecuentes)</router-link>
         </a-menu-item>
@@ -122,7 +126,7 @@ watch(() => route.name, () => {
 
 <style>
 .container {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: px;
   min-height: calc(100vh - 64px);
 }

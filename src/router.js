@@ -12,6 +12,7 @@ import NotFound from './views/NotFound.vue';
 import RecetaCompleta from "./views/RecetaCompleta.vue";
 import MeGusta from "./views/MeGusta.vue"
 import Blog from "./views/Blog.vue"
+import Recetas from "./views/Recetas.vue";
 
 
 
@@ -51,6 +52,11 @@ const routes = [
         path: '/',
         component: Home,
         name: 'home'
+    },
+    {
+        path: '/recetas',
+        component: Recetas,
+        name: 'recetas'
     },
     {
         path:'/blog',
