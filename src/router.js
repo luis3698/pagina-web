@@ -13,6 +13,7 @@ import RecetaCompleta from "./views/RecetaCompleta.vue";
 import MeGusta from "./views/MeGusta.vue"
 import Blog from "./views/Blog.vue"
 import Recetas from "./views/Recetas.vue";
+import SobreNosotros from "./views/SobreNosotros.vue"
 
 
 
@@ -57,6 +58,11 @@ const routes = [
         path: '/recetas',
         component: Recetas,
         name: 'recetas'
+    },
+    {
+        path: '/sobrenosostros',
+        component: SobreNosotros,
+        name: 'sobrenosotros'
     },
     {
         path:'/blog',

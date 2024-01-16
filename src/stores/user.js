@@ -33,47 +33,71 @@ export const useUserStore = defineStore('userStore', {
                 this.loadingUser = false;
             }
         },
-        async setUser(user){
+        async setUser(user) {
             try {
                 const docRef = doc(db, 'users', user.uid);
-
+        
                 this.userData = {
                     email: user.email,
                     uid: user.uid,
                     displayName: user.displayName,
-                    photoUrl: user.photoURL
-                }; 
+                    photoUrl: user.photoURL,
+                    biografia: '', // Puedes dejarlo vacío por defecto
+                    genero: '' // Puedes dejarlo vacío por defecto
+                };
+        
+                // Asigna los valores a biografía y género si están presentes en la base de datos
+                const userDoc = await getDoc(docRef);
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    this.userData.biografia = userData.biografia || '';
+                    this.userData.genero = userData.genero || '';
+                }
+        
                 await setDoc(docRef, this.userData);
-                //console.log(this.userData)
             } catch (error) {
                 console.log(error);
             }
         },
-        async updateUser(displayName, image){
+        
+        
+        
+        async updateUser(displayName, image, { biografia, genero }) {
             try {
                 if (image) {
                     this.loadingUser = true;
-                    // console.log(image);
                     const storageRef = ref(storage, `perfiles/${this.userData.uid}`);
                     await uploadBytes(storageRef, image.originFileObj);
                     const photoURL =  await getDownloadURL(storageRef);
-                    // console.log(photoURL)
                     await updateProfile(auth.currentUser, {
                         photoURL,
-                   }); 
+                    }); 
                 }
-
+        
                 await updateProfile(auth.currentUser, {
-                     displayName,
+                    displayName,
                 });
-                this.setUser(auth.currentUser)
+        
+                // Actualizar la biografía y el género
+                this.userData.biografia = biografia || '';
+                this.userData.genero = genero || '';
+        
+                // Log para depuración
+                console.log('Biografía:', this.userData.biografia);
+                console.log('Género:', this.userData.genero);
+        
+                // Actualizar la información en Firestore
+                const docRef = doc(db, 'users', auth.currentUser.uid);
+                await setDoc(docRef, this.userData);
             } catch (error) {
                 console.log(error.code);
-                return error.code
+                return error.code;
             } finally {
                 this.loadingUser = false;
             }
         },
+        
+        
         async loginUser(email, password) {
             try {
                 this.loadingUser = true;
@@ -128,16 +152,10 @@ export const useUserStore = defineStore('userStore', {
         },
         currentUser() {
             return new Promise((resolve, reject) => {
-                const unsuscribe = onAuthStateChanged(auth, async(user) => {
+                const unsuscribe = onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        console.log(user);
-                        // await this.setUser(user)
-                        this.userData = {
-                            email: user.email,
-                            uid: user.uid,
-                            displayName: user.displayName,
-                            photoUrl: user.photoURL
-                        };
+                        await this.setUser(user);
+                        console.log('Datos del usuario:', this.userData);
                     } else {
                         this.userData = null;
                         const databaseStore = useDatabaseStore();
@@ -147,7 +165,9 @@ export const useUserStore = defineStore('userStore', {
                 }, (e) => reject(e));
                 unsuscribe();
             });
-        },
+        }
+        
+        
         
     },
 })
