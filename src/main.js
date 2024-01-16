@@ -7,6 +7,8 @@ import { auth } from './firebaseConfig'; // Asegúrate de importar tu configurac
 import { useUserStore } from './stores/user';
 import 'ant-design-vue/dist/antd.css';
 
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 const app = createApp(App);
 const pinia = createPinia();

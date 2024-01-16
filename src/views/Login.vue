@@ -5,19 +5,8 @@
           <h1 class="text-center">Login</h1>
           <a-row class="form-container">
             <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
-              <a-form
-                name="basicLogin"
-                autocomplete="off"
-                layout="vertical"
-                :model="formState"
-                @finish="onFinish"
-                @finishFailed="onFinishFailed"
-              >
-                <a-form-item
-                  name="email"
-                  label="Ingresa tu correo"
-                  :rules="[{ required: true, whitespace: true, message: 'Ingresa un email', type: 'email' }]"
-                >
+              <a-form name="basicLogin" autocomplete="off" layout="vertical" :model="formState" @finish="onFinish" @finishFailed="onFinishFailed">
+                <a-form-item name="email" label="Ingresa tu correo" :rules="[{ required: true, whitespace: true, message: 'Ingresa un email', type: 'email' }]">
                   <a-tooltip   class="imput" placement="bottom">
                     <template #title>
                       <span>ejemplo@gmail.com.mx</span>
@@ -29,11 +18,9 @@
                     </a-input>
                   </a-tooltip>
                 </a-form-item>
-                <a-form-item
-                  name="password"
-                  label="Ingrese su contraseña"
-                  :rules="[{ required: true, min: 6, whitespace: true, message: 'Ingresa una contraseña ' }]"
-                >
+
+                  <!-- Contraseña -->
+                <a-form-item name="password" label="Ingrese su contraseña" :rules="[{ required: true, min: 6, whitespace: true, message: 'Ingresa una contraseña ' }]" >
                   <a-tooltip class="imput" placement="bottom">
                     <template #title>
                       <span>Tiene que ser mínimo de 6 caracteres</span>
@@ -45,37 +32,27 @@
                     </a-input-password>
                   </a-tooltip>
                 </a-form-item>
+
+                <!-- Botón de Registro -->
                 <a-form-item class="center-button">
-                  <a-button
-                    class="button"
-                    html-type="submit"
-                    :loading="userStore.loadingUser"
-                    :disabled="userStore.loadingUser || formState.email === '' || formState.password === ''"
-                  >
+                  <a-button  class="button"  html-type="submit"  :loading="userStore.loadingUser"  :disabled="userStore.loadingUser || formState.email === '' || formState.password === ''">
                     Ingresar
                   </a-button>
                 </a-form-item>
+
+
                 <div class="additional-options">
                   <a class="forgotPassword" href="#" @click="forgotPassword">¿Olvidaste tu contraseña?</a>
                   <a href="">Inicia sesion con</a>
                   <div class="social-buttons">
                     
-                      <img  :src="GoogleIcon"
-                      alt="Google Icon"
-                      style="cursor: pointer;"
-                      @click="signInWithGoogle" />
+                      <img  :src="GoogleIcon"  alt="Google Icon"  style="cursor: pointer;"  @click="signInWithGoogle" />
                    
                     
-                      <img :src="FacebookIcon" 
-                      alt="Facebook Icon" 
-                      style="cursor: pointer;" 
-                      @click="signInWithFacebook" />
+                      <img :src="FacebookIcon"   alt="Facebook Icon"   style="cursor: pointer;"  @click="signInWithFacebook" />
                    
                     
-                      <img :src="MicrosoftIcon" 
-                      alt="Microsoft Icon" 
-                      style="cursor: pointer;" 
-                      @click="signInWithMicrosoft" />
+                      <img :src="MicrosoftIcon"   alt="Microsoft Icon"   style="cursor: pointer;"   @click="signInWithMicrosoft" />
                    
                   </div>                
                 </div>
@@ -185,7 +162,7 @@
   .context {
     width: 100%;
     position: absolute;
-    top: 20vh;
+    top: 10vh;
     z-index: 1; /* Asegura que la tarjeta esté sobre el fondo */
   }
   

@@ -11,6 +11,7 @@
   
       <section class="recipe-container">
         <div v-if="databaseStore.loadingDoc" class="loading-message">Cargando recetas...</div>
+        
         <div v-else>
           <div v-if="filteredRecipes.length === 0" class="no-results-message">No se encontraron recetas.</div>
           <div class="recipe-grid" v-else>
